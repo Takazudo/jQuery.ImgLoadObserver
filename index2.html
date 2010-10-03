@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>$.ImgLoadObserver</title>
+<script src="jquery.js"></script>
+<script src="jquery.imgLoadObserver.js"></script>
+<style>
+*{
+	line-height:1.5;
+	font-family: Arial, Helvetica, sans-serif;
+}
+body{
+	padding:0 30px 30px;
+}
+#progress{
+	font-size:4em;
+	background:#000;
+	color:#fff;
+	padding:0 30px;
+	margin:0;
+}
+#imgs{
+	list-style-type:none;
+	overflow:hidden;
+	margin:0;
+	padding:10px 0 0;
+}
+	#imgs li{
+		float:left;
+		padding:0 10px 10px 0;
+	}
+	#imgs img{
+		float:left;
+		width:70px;
+		height:70px;
+	}
+</style>
+<script>
+$(function(){
+
+	/* imgs */
+
+	var test = $('#test');
+	var test2 = $('#test2');
+	var test3 = $('#test3');
+	var test4 = $('#test4');
+	var progress = $('#progress');
+	var count = $('.count', progress);
+	var imgs = $('#imgs');
+
+	/* loader */
+
+	var loader = new $.ImgLoadObserver({
+		paths: [ 'imgs/1.jpg','imgs/2.jpg','imgs/3x.jpg','imgs/4.jpg','imgs/5.jpg','imgs/6.jpg','imgs/7.jpg','imgs/8.jpg','imgs/9.jpg','imgs/10.jpg','imgs/11.jpg','imgs/12.jpg','imgs/13.jpg','imgs/14.jpg','imgs/15.jpg','imgs/16.jpg','imgs/17.jpg','imgs/18.jpg','imgs/19.jpg','imgs/20.jpg','imgs/21.jpg','imgs/22.jpg','imgs/23.jpg','imgs/24.jpg','imgs/25.jpg','imgs/26.jpg','imgs/27.jpg','imgs/28.jpg','imgs/29.jpg','imgs/30.jpg','imgs/31.jpg','imgs/32.jpg','imgs/33.jpg','imgs/34.jpg','imgs/35.jpg','imgs/36.jpg','imgs/37.jpg','imgs/38.jpg','imgs/39.jpg','imgs/40.jpg','imgs/41.jpg','imgs/42.jpg','imgs/43.jpg','imgs/44.jpg','imgs/45.jpg','imgs/46x.jpg','imgs/47.jpg' ]
+	});
+
+	/* tests */
+
+	loader.onLoadStart(function(){
+		test.append($('<li />',{
+			text: 'loadStart callback fired.'
+		}));
+		count.text('0');
+	});
+
+	test2.append($('<li />',{
+		text: String(loader.getTotal())
+	}));
+
+	loader.onOneLoad(function(img){
+		test3.append($('<li />',{
+			text:
+				'oneLoad callback fired: src="'
+				+ img.attr('src')
+				+ '". - '
+				+ loader.getLoadedImgsSize()
+				+ ' imgs loaded. - '
+				+ loader.getLoadedPercentage()
+				+ '% finished.'
+		}));
+		count.text( loader.getLoadedPercentage() );
+	});
+
+	loader.onAllLoad(function(img){
+		test4.append($('<li />', {
+			text: 'allLoad callback fired.'
+		}));
+		setTimeout(function(){
+			progress.text('loading complete.');
+			$.each(loader.getImgs(), function(){
+				var li = $('<li />').append(this);
+				imgs.append(li);
+			});
+		},500);
+	});
+
+	/* fire */
+
+	loader.load();
+
+});
+</script>
+</head>
+<body>
+	<h1>$.ImgLoadObserver - error example</h1>
+	<p>Some of following imgs does not exist. $.ImgLoadObserver handles img.load's error as it successed.</p>
+	<p id="progress">
+		loading pictures: <span class="count">0</span>%
+	</p>
+	<ul id="imgs"></ul>
+	<h2>instance.onLoadStart(fn)</h2>
+	<ul id="test"></ul>
+	<h2>instance.getTotal()</h2>
+	<ul id="test2"></ul>
+	<h2>
+		instance.onOneLoad(fn),<br />
+		instance.getLoadedImgsSize(),<br />
+		instance.getLoadedPercentage()
+	</h2>
+	<ul id="test3"></ul>
+	<h2>instance.onAllLoad(fn)</h2>
+	<ul id="test4"></ul>
+</body>
+</html>

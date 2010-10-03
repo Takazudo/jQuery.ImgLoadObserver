@@ -1,1 +1,18 @@
-foobar
+jQuery.ImgLoadObserver does multi imgage files' now-loading like Flash.
+
+see this demo:
+http://dl.dropbox.com/u/268240/gitHubDemos/jQuery.imgLoadObserver/index.html
+
+works on jQuery 1.4.2.
+
+tested browsers:
+Windows Vista IE6
+Windows Vista IE7
+Windows Vista IE8
+Windows Vista Safari5.0.2
+Windows Vista Opera10.6
+Windows Vista Chrome7
+Windows Vista Firefox3.6.10
+Safari on iOS 3.2.2
+Safari on iOS 4.1
+
