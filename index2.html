@@ -68,7 +68,7 @@ $(function(){
 		text: String(loader.getTotal())
 	}));
 
-	loader.onOneLoad(function(img){
+	loader.onOneLoad(function(event, img){
 		test3.append($('<li />',{
 			text:
 				'oneLoad callback fired: src="'
@@ -82,17 +82,15 @@ $(function(){
 		count.text( loader.getLoadedPercentage() );
 	});
 
-	loader.onAllLoad(function(img){
+	loader.onAllLoad(function(event, img){
 		test4.append($('<li />', {
 			text: 'allLoad callback fired.'
 		}));
-		setTimeout(function(){
-			progress.text('loading complete.');
-			$.each(loader.getImgs(), function(){
-				var li = $('<li />').append(this);
-				imgs.append(li);
-			});
-		},500);
+		progress.text('loading complete.');
+		$.each(loader.getImgs(), function(){
+			var li = $('<li />').append(this);
+			imgs.append(li);
+		});
 	});
 
 	/* fire */

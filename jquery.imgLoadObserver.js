@@ -1,14 +1,14 @@
-/*
+/*!
  * $.ImgLoadObserver
- *
- * version 0.1.1 (2010/09/02)
+ * https://github.com/Takazudo/jQuery.ImgLoadObserver
+ * version 0.2.0 (2010/11/15)
  * Copyright (c) 2010 Takeshi Takatsudo (takazudo[at]gmail.com)
  * MIT license
  *
 =============================================================================
  depends on
 -----------------------------------------------------------------------------
- * jQuery 1.4.2
+ * jQuery 1.4.4
  *
 =============================================================================
  how to use
@@ -24,41 +24,43 @@
  */
 $.ImgLoadObserver = function(options){
 
-	var o = this.options = $.extend({
+	var o = this.options = $.extend({}, this.options, options);
+
+	this._observer = $({});
+
+	if(!$.isArray(o.paths)){
+		$.error('$.ImgLoadObserver needs paths:[Array].');
+	}else{
+		this._paths = o.paths;
+	}
+
+	this._imgs = [];
+	this._count = o.paths.length;
+
+	this.onLoadStart(o.onLoadStart);
+	this.onOneLoad(o.onOneLoad);
+	this.onAllLoad(o.onAllLoad);
+
+};
+$.ImgLoadObserver.prototype = {
+
+	options: {
 		paths: null, // needs to be given array or img paths
 		onLoadStart: null, // function. imgs load start callback
 		onAllLoad: null, // function. all imgs load callback
 		onOneLoad: null, // function. one imgs load callback
 		finishDelay: 200 // delay to fire allLoadHandler
-	}, options);
-	
-	if(o.paths){
-		this._paths = o.paths;
-	
-	}else{
-		return this;
-	}
-	this._imgs = [];
-	this._count = o.paths.length;
+	},
 
-	this._callbacks_loadStart = $.isArray(o.onLoadStart) ? o.onLoadStart : [];
-	this._callbacks_oneLoad = $.isArray(o.onOneLoad) ? o.onOneLoad : [];
-	this._callbacks_allLoad = $.isArray(o.onAllLoad) ? o.onAllLoad : [];
+	_observer: null, // a jQuery object to store events
 
-	$.isFunction(o.onLoadStart) && this.onLoadStart(o.onLoadStart);
-	$.isFunction(o.onOneLoad) && this.onOneLoad(o.onOneLoad);
-	$.isFunction(o.onAllLoad) && this.onAllLoad(o.onAllLoad);
+	_paths: null, // array to store received paths
+	_imgs: null, // array to store created imgs
 
-};
-$.ImgLoadObserver.prototype = {
-	options: null,
-	_imgs: null,
+	_loadCompleted: false, // flag
+
 	_count: 0,
-	_paths: null,
-	_callbacks_loadStart: null,
-	_callbacks_oneLoad: null,
-	_callbacks_allLoad: null,
-	_loadCompleted: false,
+
 	load: function(){
 		var self = this;
 		self._fireLoadStart();
@@ -89,39 +91,45 @@ $.ImgLoadObserver.prototype = {
 		}
 		return this;
 	},
+
+	/* trigger wrapper */
+
 	_fireLoadStart: function(){
-		$.each(this._callbacks_loadStart, function(){
-			this();
-		});
+		this._observer.trigger('loadstart');
 		return this;
 	},
 	_fireOneLoad: function(img){
-		$.each(this._callbacks_oneLoad, function(){
-			this(img);
-		});
+		this._observer.trigger('oneload', [img]);
 		return this;
 	},
 	_fireAllLoad: function(){
 		var self = this;
 		setTimeout(function(){
-			$.each(self._callbacks_allLoad, function(){
-				this();
-			});
+			self._observer.trigger('allload');
 		}, self.options.finishDelay);
 		return self;
 	},
+
+	/* bind wrapper */
+
 	onLoadStart: function(fn){
-		this._callbacks_loadStart.push(fn);
+		if(!$.isFunction(fn)){ return this; }
+		this._observer.bind('loadstart', fn);
 		return this;
 	},
 	onOneLoad: function(fn){
-		this._callbacks_oneLoad.push(fn);
+		if(!$.isFunction(fn)){ return this; }
+		this._observer.bind('oneload', fn);
 		return this;
 	},
 	onAllLoad: function(fn){
-		this._callbacks_allLoad.push(fn);
+		if(!$.isFunction(fn)){ return this; }
+		this._observer.bind('allload', fn);
 		return this;
 	},
+
+	/* misc */
+
 	getTotal: function(){
 		return this._paths.length;
 	},
@@ -137,6 +145,7 @@ $.ImgLoadObserver.prototype = {
 	getImgs: function(){
 		return this._imgs;
 	}
+
 };
 
 })(jQuery); // end $=jQuery encapsulation
