@@ -1,7 +1,7 @@
 /*!
  * $.ImgLoadObserver
  * https://github.com/Takazudo/jQuery.ImgLoadObserver
- * version 0.2.0 (2010/11/15)
+ * version 0.2.1 (2010/11/16)
  * Copyright (c) 2010 Takeshi Takatsudo (takazudo[at]gmail.com)
  * MIT license
  *
@@ -70,14 +70,10 @@ $.ImgLoadObserver.prototype = {
 			return this;
 		}
 		$.each(this._paths, function(){
-			var fn = function(){
+			var img = $('<img />');
+			img.bind('load error', function(){
 				self._decrease(img);
-			};
-			var img = $('<img />',{
-				src: this,
-				load: fn,
-				error: fn
-			});
+			}).attr('src', this);
 			self._imgs.push(img);
 		});
 		return this;

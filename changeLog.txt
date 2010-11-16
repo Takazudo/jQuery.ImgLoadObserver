@@ -5,9 +5,14 @@
 
 2010-11-15 Takeshi Takatsudo <takazudo@gmail.com>
 	
-	* ver 0.2
+	* ver 0.2.0
 	upgraded jQuery's version from 1.4.2 to 1.4.4
 	changed observer way to use jQuery's bind/trigger.
 	Interface was changed a little.
+
+2010-11-15 Takeshi Takatsudo <takazudo@gmail.com>
+	
+	* ver 0.2.1
+	bugfix. IE sometimes didnot fire handlers.
 
 
